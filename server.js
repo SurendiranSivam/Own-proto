@@ -41,8 +41,13 @@ app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Login at http://localhost:${PORT}/login.html`);
-});
+// Start server (only in non-Vercel environment)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Login at http://localhost:${PORT}/login.html`);
+  });
+}
+
+// Export for Vercel
+module.exports = app;
