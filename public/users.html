@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Own Proto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="images/logo.png" alt="Own Proto" height="36"><span>Own Proto</span>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="vendors.html">Vendors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="inventory.html">Inventory</a></li>
+                    <li class="nav-item"><a class="nav-link" href="procurement.html">Procurement</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="print-usage.html">Print Usage</a></li>
+                    <li class="nav-item"><a class="nav-link" href="payments.html">Payments</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="users.html">Users</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle user-dropdown" href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <span id="currentUserName">User</span>
+                            <span class="role-badge" id="currentUserRole">Role</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html">👤 Profile</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="auth.logout()">🚪 Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid mt-4">
+        <div class="page-header">
+            <h2>👥 User Management</h2>
+            <button class="btn btn-add" id="addUserBtn">+ Add User</button>
+        </div>
+        <div class="alert alert-info">
+            <strong>Roles:</strong> Super Admin = Full | Manager = View+Edit | Executive = View Only
+        </div>
+        <div class="card mb-4 d-none" id="userForm">
+            <div class="card-header">
+                <h5 id="userFormTitle">Add User</h5>
+            </div>
+            <div class="card-body">
+                <form id="userFormElement">
+                    <div class="row">
+                        <div class="col-md-4 mb-3"><label class="form-label">Name *</label><input type="text"
+                                class="form-control" id="userName" required></div>
+                        <div class="col-md-4 mb-3"><label class="form-label">Email *</label><input type="email"
+                                class="form-control" id="userEmail" required></div>
+                        <div class="col-md-4 mb-3"><label class="form-label">Role *</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="executive">Executive</option>
+                                <option value="manager">Manager</option>
+                                <option value="super_admin">Super Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3"><label class="form-label">Password</label><input type="password"
+                                class="form-control" id="userPassword" minlength="6"></div>
+                        <div class="col-md-4 mb-3"><label class="form-label">Status</label>
+                            <select class="form-select" id="userIsActive">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" id="cancelUserBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        if (!auth.requireAuth()) { } else if (!auth.isSuperAdmin()) { window.location.href = '/dashboard.html'; } else { auth.setupPageForRole(); loadUsers(); }
+        let users = [], editingId = null;
+        async function loadUsers() { try { const r = await fetch('/api/auth/users', { headers: auth.authHeader() }); if (!r.ok) throw new Error(); users = await r.json(); renderUsers(); } catch (e) { document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed</td></tr>'; } }
+        function renderUsers() {
+            const t = document.getElementById('usersTableBody'); if (!users.length) { t.innerHTML = '<tr><td colspan="5">No users</td></tr>'; return; }
+            t.innerHTML = users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><span class="role-badge role-${u.role}">${u.role.replace('_', ' ').toUpperCase()}</span></td><td>${u.is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td><td><button class="btn btn-sm btn-primary btn-edit" onclick="editUser(${u.id})">Edit</button> <button class="btn btn-sm btn-danger btn-delete" onclick="deleteUser(${u.id})">Delete</button></td></tr>`).join('');
+        }
+        function showForm(u = null) { editingId = u ? u.id : null; document.getElementById('userName').value = u ? u.name : ''; document.getElementById('userEmail').value = u ? u.email : ''; document.getElementById('userEmail').disabled = !!u; document.getElementById('userRole').value = u ? u.role : 'executive'; document.getElementById('userPassword').value = ''; document.getElementById('userPassword').required = !u; document.getElementById('userIsActive').value = u ? String(u.is_active) : 'true'; document.getElementById('userFormTitle').textContent = u ? 'Edit User' : 'Add User'; document.getElementById('userForm').classList.remove('d-none'); }
+        function hideForm() { document.getElementById('userForm').classList.add('d-none'); editingId = null; document.getElementById('userEmail').disabled = false; }
+        function editUser(id) { const u = users.find(x => x.id === id); if (u) showForm(u); }
+        async function deleteUser(id) { if (!confirm('Delete?')) return; try { await fetch(`/api/auth/users/${id}`, { method: 'DELETE', headers: auth.authHeader() }); loadUsers(); } catch (e) { alert('Failed'); } }
+        document.getElementById('userFormElement').addEventListener('submit', async e => { e.preventDefault(); const d = { name: document.getElementById('userName').value, role: document.getElementById('userRole').value, is_active: document.getElementById('userIsActive').value === 'true' }; if (!editingId) { d.email = document.getElementById('userEmail').value; d.password = document.getElementById('userPassword').value; } else if (document.getElementById('userPassword').value) { d.password = document.getElementById('userPassword').value; } try { await fetch(editingId ? `/api/auth/users/${editingId}` : '/api/auth/users', { method: editingId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', ...auth.authHeader() }, body: JSON.stringify(d) }); hideForm(); loadUsers(); } catch (e) { alert('Failed'); } });
+        document.getElementById('addUserBtn').addEventListener('click', () => showForm());
+        document.getElementById('cancelUserBtn').addEventListener('click', hideForm);
+    </script>
+</body>
+
+</html>

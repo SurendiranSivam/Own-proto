@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Own Proto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="images/logo.png" alt="Own Proto" height="36">
+                <span>Own Proto</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="vendors.html">Vendors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="inventory.html">Inventory</a></li>
+                    <li class="nav-item"><a class="nav-link" href="procurement.html">Procurement</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="print-usage.html">Print Usage</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="payments.html">Payments</a></li>
+                    <li class="nav-item" id="usersNavLink" style="display: none;"><a class="nav-link"
+                            href="users.html">Users</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle user-dropdown" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <span id="currentUserName">User</span>
+                            <span class="role-badge" id="currentUserRole">Role</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="admin-only"><a class="dropdown-item" href="profile.html">👤 Profile</a></li>
+                            <li class="admin-only">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="auth.logout()">🚪 Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="page-header">
+            <h2>💳 Payment Management</h2>
+            <button class="btn btn-add" id="addPaymentBtn">+ Add Payment</button>
+        </div>
+
+        <div class="card mb-4 d-none" id="paymentForm">
+            <div class="card-header">
+                <h5>Add New Payment</h5>
+            </div>
+            <div class="card-body">
+                <form id="paymentFormElement">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentOrder" class="form-label">Order *</label>
+                            <select class="form-select" id="paymentOrder" required>
+                                <option value="">Select Order</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentAmount" class="form-label">Amount *</label>
+                            <input type="number" step="0.01" class="form-control" id="paymentAmount" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentType" class="form-label">Type *</label>
+                            <select class="form-select" id="paymentType" required>
+                                <option value="advance">Advance</option>
+                                <option value="balance">Balance</option>
+                                <option value="refund">Refund</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentMethod" class="form-label">Method</label>
+                            <select class="form-select" id="paymentMethod">
+                                <option value="cash">Cash</option>
+                                <option value="upi">UPI</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="card">Card</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentDate" class="form-label">Date *</label>
+                            <input type="date" class="form-control" id="paymentDate" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="paymentTransactionRef" class="form-label">Txn Ref</label>
+                            <input type="text" class="form-control" id="paymentTransactionRef">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Payment</button>
+                        <button type="button" class="btn btn-secondary" id="cancelPaymentBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div id="paymentsTable"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script src="js/tableUtils.js"></script>
+    <script src="js/payments.js"></script>
+    <script>
+        if (!auth.requireAuth()) { } else { auth.setupPageForRole(); }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Own Proto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <img src="images/logo.png" alt="Own Proto" height="36">
+                <span>Own Proto</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="vendors.html">Vendors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="inventory.html">Inventory</a></li>
+                    <li class="nav-item"><a class="nav-link" href="procurement.html">Procurement</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="print-usage.html">Print Usage</a></li>
+                    <li class="nav-item"><a class="nav-link" href="payments.html">Payments</a></li>
+                    <li class="nav-item" id="usersNavLink"><a class="nav-link" href="users.html">Users</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle user-dropdown" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <span id="currentUserName">User</span>
+                            <span class="role-badge" id="currentUserRole">Role</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item active" href="profile.html">👤 Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="auth.logout()">🚪 Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Profile Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <div class="profile-avatar mx-auto mb-4" id="profileAvatar">SA</div>
+                        <h4 class="mb-1" id="profileName">Super Admin</h4>
+                        <p class="text-muted mb-3" id="profileEmail">admin@ownproto.com</p>
+                        <span class="role-badge role-super_admin" id="profileRole">SUPER ADMIN</span>
+
+                        <hr class="my-4">
+
+                        <div class="text-start">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Status</span>
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Last Login</span>
+                                <span id="profileLastLogin">-</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Member Since</span>
+                                <span id="profileCreatedAt">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="col-lg-8">
+                <!-- Change Password -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔐 Change Password</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="changePasswordForm">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" required minlength="6">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- System Stats (Admin Only) -->
+                <div class="card mb-4 admin-only">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 System Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card info">
+                                    <h5>Total Users</h5>
+                                    <h3 id="statUsers">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card success">
+                                    <h5>Active Orders</h5>
+                                    <h3 id="statOrders">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card warning">
+                                    <h5>Vendors</h5>
+                                    <h3 id="statVendors">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card primary">
+                                    <h5>Filaments</h5>
+                                    <h3 id="statFilaments">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card admin-only">
+                    <div class="card-header">
+                        <h5 class="mb-0">⚡ Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="users.html" class="btn btn-primary">👥 Manage Users</a>
+                            <a href="vendors.html" class="btn btn-success">🏢 Add Vendor</a>
+                            <a href="orders.html" class="btn btn-warning">📋 New Order</a>
+                            <a href="inventory.html" class="btn btn-info text-white">📦 Check Inventory</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.3);
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script>
+        // Check auth and admin only
+        if (!auth.requireAuth()) {
+            // Redirect
+        } else if (!auth.isSuperAdmin()) {
+            window.location.href = '/dashboard.html';
+        } else {
+            auth.setupPageForRole();
+            loadProfile();
+        }
+
+        async function loadProfile() {
+            const user = auth.getUser();
+            if (!user) return;
+
+            // Update profile display
+            document.getElementById('profileAvatar').textContent = auth.getInitials();
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileEmail').textContent = user.email;
+
+            const roleLabels = { super_admin: 'SUPER ADMIN', manager: 'MANAGER', executive: 'EXECUTIVE' };
+            document.getElementById('profileRole').textContent = roleLabels[user.role] || user.role;
+            document.getElementById('profileRole').className = `role-badge role-${user.role}`;
+
+            // Load full user data
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: auth.authHeader()
+                });
+                if (response.ok) {
+                    const fullUser = await response.json();
+                    document.getElementById('profileLastLogin').textContent =
+                        fullUser.last_login ? new Date(fullUser.last_login).toLocaleString() : 'Never';
+                    document.getElementById('profileCreatedAt').textContent =
+                        fullUser.created_at ? new Date(fullUser.created_at).toLocaleDateString() : '-';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            // Load stats
+            loadStats();
+        }
+
+        async function loadStats() {
+            try {
+                const [users, orders, vendors, filaments] = await Promise.all([
+                    fetch('/api/auth/users', { headers: auth.authHeader() }).then(r => r.json()).catch(() => []),
+                    fetch('/api/orders').then(r => r.json()).catch(() => []),
+                    fetch('/api/vendors').then(r => r.json()).catch(() => []),
+                    fetch('/api/inventory').then(r => r.json()).catch(() => [])
+                ]);
+
+                document.getElementById('statUsers').textContent = users.length || 0;
+                document.getElementById('statOrders').textContent =
+                    orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length || 0;
+                document.getElementById('statVendors').textContent = vendors.length || 0;
+                document.getElementById('statFilaments').textContent = filaments.length || 0;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Change password
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            try {
+                await auth.changePassword(currentPassword, newPassword);
+                alert('Password changed successfully!');
+                e.target.reset();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

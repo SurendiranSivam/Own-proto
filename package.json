@@ -1,0 +1,31 @@
+{
+  "name": "3d-printing-business-management",
+  "version": "2.0.0",
+  "description": "Web application for managing 3D printing business with Supabase backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "3d-printing",
+    "business-management",
+    "inventory",
+    "supabase",
+    "express"
+  ],
+  "author": "Surendiran",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.2",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
