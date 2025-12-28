@@ -92,28 +92,96 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <label for="orderPrintType" class="form-label">Print Type</label>
-                            <select class="form-select" id="orderPrintType">
-                                <option value="">Select</option>
+                            <label for="orderPrintType" class="form-label">Print Type *</label>
+                            <select class="form-select" id="orderPrintType" required>
+                                <option value="">Select Type</option>
                                 <option value="Prototype">Prototype</option>
-                                <option value="Bulk">Bulk</option>
-                                <option value="Custom">Custom</option>
+                                <option value="Bulk">Bulk Production</option>
+                                <option value="Custom">Custom Design</option>
+                                <option value="Functional">Functional Part</option>
+                                <option value="Miniature">Miniature/Figurine</option>
                             </select>
+                            <div class="invalid-feedback">Please select print type</div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="orderFilamentType" class="form-label">Filament Type</label>
-                            <input type="text" class="form-control" id="orderFilamentType">
+                            <label for="orderFilamentType" class="form-label">Filament Type *</label>
+                            <select class="form-select" id="orderFilamentType" required>
+                                <option value="">Select Filament</option>
+                                <option value="PLA">PLA</option>
+                                <option value="ABS">ABS</option>
+                                <option value="PETG">PETG</option>
+                                <option value="TPU">TPU (Flexible)</option>
+                                <option value="ASA">ASA</option>
+                                <option value="Nylon">Nylon</option>
+                                <option value="HIPS">HIPS</option>
+                                <option value="Carbon Fiber">Carbon Fiber</option>
+                                <option value="Wood Fill">Wood Fill</option>
+                                <option value="Metal Fill">Metal Fill</option>
+                            </select>
+                            <div class="invalid-feedback">Please select filament type</div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="orderFilamentColor" class="form-label">Filament Color</label>
-                            <input type="text" class="form-control" id="orderFilamentColor">
+                            <label for="orderFilamentColor" class="form-label">Filament Colors</label>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button"
+                                    id="colorDropdownBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                    Select Colors
+                                </button>
+                                <div class="dropdown-menu p-3" style="min-width: 280px;">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input type="color" class="form-control form-control-color me-2"
+                                            id="orderColorPicker" value="#000000">
+                                        <small>Pick Custom</small>
+                                    </div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Black" id="colorBlack"><label class="form-check-label"
+                                            for="colorBlack">⬛ Black</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="White" id="colorWhite"><label class="form-check-label"
+                                            for="colorWhite">⬜ White</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Red" id="colorRed"><label class="form-check-label" for="colorRed">🟥
+                                            Red</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Blue" id="colorBlue"><label class="form-check-label"
+                                            for="colorBlue">🟦 Blue</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Green" id="colorGreen"><label class="form-check-label"
+                                            for="colorGreen">🟩 Green</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Yellow" id="colorYellow"><label class="form-check-label"
+                                            for="colorYellow">🟨 Yellow</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Orange" id="colorOrange"><label class="form-check-label"
+                                            for="colorOrange">🟧 Orange</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Purple" id="colorPurple"><label class="form-check-label"
+                                            for="colorPurple">🟪 Purple</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Pink" id="colorPink"><label class="form-check-label"
+                                            for="colorPink">💗 Pink</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Gray" id="colorGray"><label class="form-check-label"
+                                            for="colorGray">🔘 Gray</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Gold" id="colorGold"><label class="form-check-label"
+                                            for="colorGold">🟡 Gold</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Silver" id="colorSilver"><label class="form-check-label"
+                                            for="colorSilver">⚪ Silver</label></div>
+                                    <div class="form-check"><input class="form-check-input color-check" type="checkbox"
+                                            value="Transparent" id="colorTransparent"><label class="form-check-label"
+                                            for="colorTransparent">💎 Transparent</label></div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="orderFilamentColor">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="orderPriority" class="form-label">Priority</label>
                             <select class="form-select" id="orderPriority">
                                 <option value="normal">Normal</option>
-                                <option value="urgent">Urgent</option>
-                                <option value="express">Express</option>
+                                <option value="urgent">🔴 Urgent</option>
+                                <option value="express">🟡 Express</option>
                             </select>
                         </div>
                     </div>
@@ -121,10 +189,11 @@
                         <div class="col-md-3 mb-3">
                             <label for="orderStatus" class="form-label">Status</label>
                             <select class="form-select" id="orderStatus">
-                                <option value="pending">Pending</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                                <option value="delivered">Delivered</option>
+                                <option value="pending">⏳ Pending</option>
+                                <option value="in_progress">🔄 In Progress</option>
+                                <option value="completed">✅ Completed</option>
+                                <option value="delivered">📦 Delivered</option>
+                                <option value="cancelled">❌ Cancelled</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
@@ -136,15 +205,29 @@
                             <input type="date" class="form-control" id="orderETA">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="orderTotalAmount" class="form-label">Total Amount *</label>
-                            <input type="number" step="0.01" class="form-control" id="orderTotalAmount" required>
+                            <label for="orderFinalDeliveryDate" class="form-label">Final Delivery Date</label>
+                            <input type="date" class="form-control" id="orderFinalDeliveryDate">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-3">
+                            <label for="orderQuantity" class="form-label">Estimated Qty (units)</label>
+                            <input type="number" class="form-control" id="orderQuantity">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="orderFilamentUsage" class="form-label">Est. Filament (kg)</label>
+                            <input type="number" step="0.001" class="form-control" id="orderFilamentUsage">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="orderTotalAmount" class="form-label">Total Amount *</label>
+                            <input type="number" step="0.01" class="form-control" id="orderTotalAmount" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <label for="orderAdvancePercentage" class="form-label">Advance %</label>
                             <input type="number" step="0.01" class="form-control" id="orderAdvancePercentage" value="0">
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="orderDiscountPercentage" class="form-label">Discount %</label>
                             <input type="number" step="0.01" class="form-control" id="orderDiscountPercentage"
@@ -153,6 +236,14 @@
                         <div class="col-md-3 mb-3">
                             <label for="orderGSTPercentage" class="form-label">GST %</label>
                             <input type="number" step="0.01" class="form-control" id="orderGSTPercentage" value="0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Advance Amount</label>
+                            <div class="form-control bg-light" id="orderAdvanceAmount">₹0.00</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Balance Amount</label>
+                            <div class="form-control bg-light" id="orderBalanceAmount">₹0.00</div>
                         </div>
                     </div>
                     <div class="mb-3">

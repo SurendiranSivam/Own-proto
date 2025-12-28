@@ -125,6 +125,27 @@
             box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.1);
         }
 
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+
+        .password-toggle:hover {
+            color: #1e3a5f;
+        }
+
         .btn-login {
             background: linear-gradient(135deg, #f5a623 0%, #ffbc4b 100%);
             border: none;
@@ -194,7 +215,7 @@
         <div class="login-left">
             <img src="images/logo.png" alt="Own Proto Logo">
             <h1>Own Proto</h1>
-            <p>3D Printing Business Management System</p>
+            <p>3D Printing Solutions Management System</p>
 
             <div class="features">
                 <div class="feature-item">
@@ -226,11 +247,14 @@
             <form id="loginForm">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                    <input type="email" class="form-control" id="email" required>
                 </div>
                 <div class="mb-4">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="password" required>
+                        <button type="button" class="password-toggle" id="togglePassword">👁️</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-login">Sign In</button>
             </form>
@@ -293,6 +317,14 @@
                 btn.disabled = false;
                 btn.textContent = 'Sign In';
             }
+        });
+
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('password');
+            const isPassword = passwordField.type === 'password';
+            passwordField.type = isPassword ? 'text' : 'password';
+            this.textContent = isPassword ? '🙈' : '👁️';
         });
 
         // Toggle forgot password form

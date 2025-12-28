@@ -34,6 +34,7 @@ app.use('/api/print-usage', require('./routes/printUsage'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/exports', require('./routes/exports'));
+app.use('/api/invoice', require('./routes/invoice'));
 
 // Root route - redirect to login
 app.get('/', (req, res) => {

@@ -101,6 +101,83 @@
                             <div class="form-control bg-light" id="procurementTotal">₹0.00</div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="procurementInvoice" class="form-label">Invoice Number</label>
+                            <input type="text" class="form-control" id="procurementInvoice">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="procurementTracking" class="form-label">Tracking Number</label>
+                            <input type="text" class="form-control" id="procurementTracking">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="procurementPaymentStatus" class="form-label">Payment Status</label>
+                            <select class="form-select" id="procurementPaymentStatus">
+                                <option value="pending">Pending</option>
+                                <option value="partial">Partial</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="procurementNotes" class="form-label">Notes</label>
+                            <input type="text" class="form-control" id="procurementNotes">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Filament Colors</label>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button"
+                                    id="procColorDropdownBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                    Select Colors
+                                </button>
+                                <div class="dropdown-menu p-3"
+                                    style="min-width: 300px; max-height: 250px; overflow-y: auto;">
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Black" id="procColorBlack"><label
+                                            class="form-check-label" for="procColorBlack">⬛ Black</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="White" id="procColorWhite"><label
+                                            class="form-check-label" for="procColorWhite">⬜ White</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Red" id="procColorRed"><label
+                                            class="form-check-label" for="procColorRed">🟥 Red</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Blue" id="procColorBlue"><label
+                                            class="form-check-label" for="procColorBlue">🟦 Blue</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Green" id="procColorGreen"><label
+                                            class="form-check-label" for="procColorGreen">🟩 Green</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Yellow" id="procColorYellow"><label
+                                            class="form-check-label" for="procColorYellow">🟨 Yellow</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Orange" id="procColorOrange"><label
+                                            class="form-check-label" for="procColorOrange">🟧 Orange</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Purple" id="procColorPurple"><label
+                                            class="form-check-label" for="procColorPurple">🟪 Purple</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Pink" id="procColorPink"><label
+                                            class="form-check-label" for="procColorPink">💗 Pink</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Gray" id="procColorGray"><label
+                                            class="form-check-label" for="procColorGray">🔘 Gray</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Gold" id="procColorGold"><label
+                                            class="form-check-label" for="procColorGold">🟡 Gold</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Silver" id="procColorSilver"><label
+                                            class="form-check-label" for="procColorSilver">⚪ Silver</label></div>
+                                    <div class="form-check"><input class="form-check-input proc-color-check"
+                                            type="checkbox" value="Transparent" id="procColorTransparent"><label
+                                            class="form-check-label" for="procColorTransparent">💎 Transparent</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="procurementColors">
+                        </div>
+                    </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Save</button>
                         <button type="button" class="btn btn-secondary" id="cancelProcurementBtn">Cancel</button>
@@ -120,6 +197,10 @@
                         <div class="col-md-4 mb-3">
                             <label for="deliveryDate" class="form-label">Delivery Date *</label>
                             <input type="date" class="form-control" id="deliveryDate" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="deliveryInvoice" class="form-label">Invoice Number</label>
+                            <input type="text" class="form-control" id="deliveryInvoice">
                         </div>
                     </div>
                     <div class="d-flex gap-2">

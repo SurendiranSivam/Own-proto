@@ -10,7 +10,6 @@ async function loadDashboard() {
     renderDashboard();
   } catch (error) {
     console.error('Dashboard load error:', error);
-    // Show error but don't break the page
     const alert = document.createElement('div');
     alert.className = 'alert alert-danger';
     alert.textContent = 'Failed to load dashboard: ' + error.message;
@@ -20,28 +19,23 @@ async function loadDashboard() {
 
 function renderDashboard() {
   // Main stats
-  const inventoryValue = document.getElementById('inventoryValue');
-  const activeOrdersCount = document.getElementById('activeOrdersCount');
-  const pendingReceivables = document.getElementById('pendingReceivables');
-  const totalRevenue = document.getElementById('totalRevenue');
+  setTextContent('inventoryValue', window.api.formatCurrency(stats.inventoryValue || 0));
+  setTextContent('activeOrdersCount', stats.activeOrdersCount || 0);
+  setTextContent('pendingReceivables', window.api.formatCurrency(stats.pendingReceivables || 0));
+  setTextContent('totalRevenue', window.api.formatCurrency(stats.totalRevenue || 0));
 
-  if (inventoryValue) inventoryValue.textContent = window.api.formatCurrency(stats.inventoryValue || 0);
-  if (activeOrdersCount) activeOrdersCount.textContent = stats.activeOrdersCount || 0;
-  if (pendingReceivables) pendingReceivables.textContent = window.api.formatCurrency(stats.pendingReceivables || 0);
-  if (totalRevenue) totalRevenue.textContent = window.api.formatCurrency(stats.totalRevenue || 0);
+  // Second row stats
+  setTextContent('totalVendors', stats.vendorCount || 0);
+  setTextContent('usedFilamentKg', (stats.usedFilamentKg || 0).toFixed(2) + ' kg');
+  setTextContent('usedFilamentCost', window.api.formatCurrency(stats.usedFilamentCost || 0));
+  setTextContent('lowStockItems', stats.lowStockCount || 0);
 
   // Quick stats
-  const statVendors = document.getElementById('statVendors');
-  const statFilaments = document.getElementById('statFilaments');
-  const statStock = document.getElementById('statStock');
-  const statPending = document.getElementById('statPending');
-  const statLowStock = document.getElementById('statLowStock');
-
-  if (statVendors) statVendors.textContent = stats.vendorCount || 0;
-  if (statFilaments) statFilaments.textContent = stats.filamentCount || 0;
-  if (statStock) statStock.textContent = (stats.totalStock || 0).toFixed(1) + ' kg';
-  if (statPending) statPending.textContent = stats.pendingDeliveries || 0;
-  if (statLowStock) statLowStock.textContent = stats.lowStockCount || 0;
+  setTextContent('statVendors', stats.vendorCount || 0);
+  setTextContent('statFilaments', stats.filamentCount || 0);
+  setTextContent('statStock', (stats.totalStock || 0).toFixed(1) + ' kg');
+  setTextContent('statPending', stats.pendingDeliveries || 0);
+  setTextContent('statLowStock', stats.lowStockCount || 0);
 
   // Stock by type table
   const stockByTypeTable = document.getElementById('stockByTypeTable');
@@ -59,7 +53,7 @@ function renderDashboard() {
     }
   }
 
-  // Recent orders table
+  // Recent orders table - with priority column
   const recentOrdersTable = document.getElementById('recentOrdersTable');
   if (recentOrdersTable) {
     if (upcomingETAs.orders && upcomingETAs.orders.length > 0) {
@@ -68,11 +62,12 @@ function renderDashboard() {
           <td>#${order.id}</td>
           <td>${order.customer_name || '-'}</td>
           <td>${window.api.formatCurrency(order.total_amount || 0)}</td>
-          <td><span class="badge bg-${getStatusColor(order.status)}">${order.status}</span></td>
+          <td><span class="badge bg-${getPriorityColor(order.priority)}">${(order.priority || 'normal').toUpperCase()}</span></td>
+          <td><span class="badge bg-${getStatusColor(order.status)}">${(order.status || 'pending').replace('_', ' ').toUpperCase()}</span></td>
         </tr>
       `).join('');
     } else {
-      recentOrdersTable.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No recent orders</td></tr>';
+      recentOrdersTable.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No recent orders</td></tr>';
     }
   }
 
@@ -109,6 +104,11 @@ function renderDashboard() {
   }
 }
 
+function setTextContent(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
 function getStatusColor(status) {
   const colors = {
     pending: 'warning',
@@ -120,7 +120,144 @@ function getStatusColor(status) {
   return colors[status] || 'secondary';
 }
 
+function getPriorityColor(priority) {
+  const colors = {
+    urgent: 'danger',
+    express: 'warning',
+    normal: 'secondary'
+  };
+  return colors[priority] || 'secondary';
+}
+
+// KPI Charts
+let orderStatusChart = null;
+let revenueChart = null;
+let stockChart = null;
+let paymentChart = null;
+
+async function loadCharts() {
+  try {
+    const chartData = await window.api.get('/dashboard/chart-data');
+    renderCharts(chartData);
+  } catch (error) {
+    console.error('Failed to load chart data:', error);
+  }
+}
+
+function renderCharts(data) {
+  // Chart color palettes
+  const statusColors = ['#ffc107', '#17a2b8', '#28a745', '#007bff', '#dc3545'];
+  const paymentColors = ['#dc3545', '#ffc107', '#28a745'];
+  const revenueColors = ['#6f42c1', '#28a745', '#ffc107'];
+  const stockColors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1'];
+
+  // Order Status Doughnut Chart
+  const orderStatusCtx = document.getElementById('orderStatusChart');
+  if (orderStatusCtx) {
+    if (orderStatusChart) orderStatusChart.destroy();
+    orderStatusChart = new Chart(orderStatusCtx, {
+      type: 'doughnut',
+      data: {
+        labels: data.orderStatus.labels,
+        datasets: [{
+          data: data.orderStatus.data,
+          backgroundColor: statusColors,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    });
+  }
+
+  // Revenue Bar Chart
+  const revenueCtx = document.getElementById('revenueChart');
+  if (revenueCtx) {
+    if (revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(revenueCtx, {
+      type: 'bar',
+      data: {
+        labels: data.revenue.labels,
+        datasets: [{
+          label: 'Amount (₹)',
+          data: data.revenue.data,
+          backgroundColor: revenueColors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function (value) {
+                return '₹' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Stock by Type Pie Chart
+  const stockCtx = document.getElementById('stockChart');
+  if (stockCtx) {
+    if (stockChart) stockChart.destroy();
+    stockChart = new Chart(stockCtx, {
+      type: 'pie',
+      data: {
+        labels: data.stockByType.labels.length > 0 ? data.stockByType.labels : ['No Data'],
+        datasets: [{
+          data: data.stockByType.data.length > 0 ? data.stockByType.data : [1],
+          backgroundColor: stockColors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    });
+  }
+
+  // Payment Status Doughnut Chart
+  const paymentCtx = document.getElementById('paymentChart');
+  if (paymentCtx) {
+    if (paymentChart) paymentChart.destroy();
+    paymentChart = new Chart(paymentCtx, {
+      type: 'doughnut',
+      data: {
+        labels: data.paymentStatus.labels,
+        datasets: [{
+          data: data.paymentStatus.data,
+          backgroundColor: paymentColors,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
-  setInterval(loadDashboard, 30000);
+  loadCharts();
+  setInterval(() => {
+    loadDashboard();
+    loadCharts();
+  }, 30000);
 });

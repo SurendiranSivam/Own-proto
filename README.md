@@ -1,6 +1,6 @@
-# 3D Printing Business Management
+# 3D Printing Solutions Management
 
-A comprehensive web application for managing a 3D printing business, including inventory tracking, order management, procurement, and financial reporting.
+A comprehensive web application for managing a 3D printing solutions business, including inventory tracking, order management, procurement, and financial reporting.
 
 ## 🚀 Features
 

@@ -1,5 +1,5 @@
 -- ============================================
--- 3D PRINTING BUSINESS MANAGEMENT - DATABASE SCHEMA
+-- 3D PRINTING SOLUTIONS MANAGEMENT - DATABASE SCHEMA
 -- Run this in Supabase SQL Editor
 -- ============================================
 

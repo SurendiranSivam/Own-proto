@@ -104,17 +104,39 @@
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="filamentWeight" class="form-label">Weight/Spool</label>
+                            <label for="filamentWeight" class="form-label">Weight/Spool (kg)</label>
                             <input type="number" step="0.01" class="form-control" id="filamentWeight" value="1">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="filamentMinStock" class="form-label">Min Stock Alert</label>
+                            <label for="filamentMinStock" class="form-label">Min Stock Alert (kg)</label>
                             <input type="number" step="0.01" class="form-control" id="filamentMinStock" value="1">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="filamentVendor" class="form-label">Vendor</label>
                             <select class="form-select" id="filamentVendor">
                                 <option value="">Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filamentPrintTempMin" class="form-label">Print Temp Min (°C)</label>
+                            <input type="number" class="form-control" id="filamentPrintTempMin" placeholder="190">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filamentPrintTempMax" class="form-label">Print Temp Max (°C)</label>
+                            <input type="number" class="form-control" id="filamentPrintTempMax" placeholder="220">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filamentBedTemp" class="form-label">Bed Temp (°C)</label>
+                            <input type="number" class="form-control" id="filamentBedTemp" placeholder="60">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filamentQualityGrade" class="form-label">Quality Grade</label>
+                            <select class="form-select" id="filamentQualityGrade">
+                                <option value="standard">Standard</option>
+                                <option value="premium">Premium</option>
+                                <option value="economy">Economy</option>
                             </select>
                         </div>
                     </div>

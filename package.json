@@ -1,7 +1,7 @@
 {
   "name": "3d-printing-business-management",
   "version": "2.0.0",
-  "description": "Web application for managing 3D printing business with Supabase backend",
+  "description": "Web application for managing 3D printing solutions with Supabase backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -26,6 +26,7 @@
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "pdfkit": "^0.17.2"
   }
 }

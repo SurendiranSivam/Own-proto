@@ -181,4 +181,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('procurementQuantity').addEventListener('input', calculateTotal);
   document.getElementById('procurementCost').addEventListener('input', calculateTotal);
+
+  // Multi-color checkbox handling
+  const procColorCheckboxes = document.querySelectorAll('.proc-color-check');
+  const procColorDropdownBtn = document.getElementById('procColorDropdownBtn');
+  const procColorHiddenInput = document.getElementById('procurementColors');
+
+  function updateProcSelectedColors() {
+    const selectedColors = [];
+    procColorCheckboxes.forEach(cb => {
+      if (cb.checked) selectedColors.push(cb.value);
+    });
+
+    if (selectedColors.length === 0) {
+      procColorDropdownBtn.textContent = 'Select Colors';
+    } else if (selectedColors.length <= 3) {
+      procColorDropdownBtn.textContent = selectedColors.join(', ');
+    } else {
+      procColorDropdownBtn.textContent = `${selectedColors.length} colors selected`;
+    }
+
+    if (procColorHiddenInput) {
+      procColorHiddenInput.value = selectedColors.join(', ');
+    }
+  }
+
+  procColorCheckboxes.forEach(cb => {
+    cb.addEventListener('change', updateProcSelectedColors);
+  });
 });

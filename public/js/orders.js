@@ -19,9 +19,16 @@ function initTable() {
     pageSize: 10,
     exportFilename: 'orders',
     columns: [
-      { field: 'id', label: 'ID', render: (val) => `#${val}` },
+      {
+        field: 'id', label: 'Invoice No', render: (val) => {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          return `INV-${year}${month}-${String(val).padStart(4, '0')}`;
+        }
+      },
       { field: 'customer_name', label: 'Customer' },
-      { field: 'contact_number', label: 'Contact' },
+      { field: 'contact_number', label: 'Phone' },
       { field: 'order_date', label: 'Order Date', render: (val) => window.api.formatDate(val) },
       { field: 'eta_delivery', label: 'ETA', render: (val) => val ? window.api.formatDate(val) : '-' },
       { field: 'total_amount', label: 'Total', render: (val) => window.api.formatCurrency(val) },
@@ -43,10 +50,16 @@ function initTable() {
           const colors = { fully_paid: 'success', partially_paid: 'warning', pending: 'danger' };
           return `<span class="badge bg-${colors[val] || 'secondary'}">${(val || 'pending').replace('_', ' ').toUpperCase()}</span>`;
         }
+      },
+      {
+        field: 'id', label: 'Actions', render: (val) => {
+          return `<button class="btn btn-sm btn-outline-primary" onclick="downloadInvoice(${val})" title="Download Invoice">📄 PDF</button>`;
+        }
       }
     ],
     filters: [
-      { field: 'customer_name', label: 'Customer', type: 'text', placeholder: 'Search...' },
+      { field: 'customer_name', label: 'Customer', type: 'text', placeholder: 'Search name...' },
+      { field: 'contact_number', label: 'Phone', type: 'text', placeholder: 'Search phone...' },
       {
         field: 'status', label: 'Status', type: 'select', options: [
           { value: 'pending', label: 'Pending' },
@@ -123,21 +136,87 @@ function calculateAmounts() {
 async function saveOrder(e) {
   e.preventDefault();
 
+  // Clear previous validation
+  document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+  const orderDate = document.getElementById('orderDate').value;
+  const etaDelivery = document.getElementById('orderETA').value;
+  const finalDeliveryDate = document.getElementById('orderFinalDeliveryDate').value;
+
+  // Validate dates
+  const errors = [];
+
+  if (!document.getElementById('orderCustomerName').value.trim()) {
+    document.getElementById('orderCustomerName').classList.add('is-invalid');
+    errors.push('Customer name is required');
+  }
+
+  if (!document.getElementById('orderPrintType').value) {
+    document.getElementById('orderPrintType').classList.add('is-invalid');
+    errors.push('Print type is required');
+  }
+
+  if (!document.getElementById('orderFilamentType').value) {
+    document.getElementById('orderFilamentType').classList.add('is-invalid');
+    errors.push('Filament type is required');
+  }
+
+  if (!orderDate) {
+    document.getElementById('orderDate').classList.add('is-invalid');
+    errors.push('Order date is required');
+  }
+
+  if (!document.getElementById('orderTotalAmount').value) {
+    document.getElementById('orderTotalAmount').classList.add('is-invalid');
+    errors.push('Total amount is required');
+  }
+
+  // ETA cannot be before order date
+  if (etaDelivery && orderDate && new Date(etaDelivery) < new Date(orderDate)) {
+    document.getElementById('orderETA').classList.add('is-invalid');
+    errors.push('ETA delivery cannot be before order date');
+  }
+
+  // Final delivery date cannot be before order date
+  if (finalDeliveryDate && orderDate && new Date(finalDeliveryDate) < new Date(orderDate)) {
+    document.getElementById('orderFinalDeliveryDate').classList.add('is-invalid');
+    errors.push('Final delivery date cannot be before order date');
+  }
+
+  // Email validation if provided
+  const email = document.getElementById('orderCustomerEmail').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('orderCustomerEmail').classList.add('is-invalid');
+    errors.push('Invalid email format');
+  }
+
+  // Phone validation if provided
+  const phone = document.getElementById('orderContact').value.trim();
+  if (phone && !/^[\d\s\-\+\(\)]{10,}$/.test(phone)) {
+    document.getElementById('orderContact').classList.add('is-invalid');
+    errors.push('Invalid phone number format');
+  }
+
+  if (errors.length > 0) {
+    window.api.showNotification(errors.join('. '), 'error');
+    return;
+  }
+
   const orderData = {
     customer_name: document.getElementById('orderCustomerName').value.trim(),
     customer_email: document.getElementById('orderCustomerEmail').value.trim(),
     contact_number: document.getElementById('orderContact').value.trim(),
     delivery_address: document.getElementById('orderDeliveryAddress').value.trim(),
     order_description: document.getElementById('orderDescription').value.trim(),
-    print_type: document.getElementById('orderPrintType').value.trim(),
-    filament_type: document.getElementById('orderFilamentType').value.trim(),
-    filament_color: document.getElementById('orderFilamentColor').value.trim(),
+    print_type: document.getElementById('orderPrintType').value,
+    filament_type: document.getElementById('orderFilamentType').value,
+    filament_color: document.getElementById('orderFilamentColor').value,
     priority: document.getElementById('orderPriority').value,
     estimated_quantity_units: document.getElementById('orderQuantity').value,
     estimated_filament_usage_kg: document.getElementById('orderFilamentUsage').value,
-    order_date: document.getElementById('orderDate').value,
-    eta_delivery: document.getElementById('orderETA').value || null,
-    final_delivery_date: document.getElementById('orderFinalDeliveryDate').value || null,
+    order_date: orderDate,
+    eta_delivery: etaDelivery || null,
+    final_delivery_date: finalDeliveryDate || null,
     total_amount: parseFloat(document.getElementById('orderTotalAmount').value),
     advance_percentage: parseFloat(document.getElementById('orderAdvancePercentage').value) || 0,
     discount_percentage: parseFloat(document.getElementById('orderDiscountPercentage').value) || 0,
@@ -145,11 +224,6 @@ async function saveOrder(e) {
     status: document.getElementById('orderStatus').value,
     notes: document.getElementById('orderNotes').value.trim()
   };
-
-  if (!orderData.customer_name || !orderData.order_date || !orderData.total_amount) {
-    window.api.showNotification('Customer name, order date, and total amount are required', 'error');
-    return;
-  }
 
   try {
     if (editingId) {
@@ -183,6 +257,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('orderTotalAmount').addEventListener('input', calculateAmounts);
   document.getElementById('orderAdvancePercentage').addEventListener('input', calculateAmounts);
+
+  // Date validation - set min dates for ETA and Final Delivery
+  document.getElementById('orderDate').addEventListener('change', function () {
+    const orderDate = this.value;
+    if (orderDate) {
+      document.getElementById('orderETA').min = orderDate;
+      document.getElementById('orderFinalDeliveryDate').min = orderDate;
+    }
+  });
+
+  // Multi-color checkbox handling
+  const colorCheckboxes = document.querySelectorAll('.color-check');
+  const colorDropdownBtn = document.getElementById('colorDropdownBtn');
+  const colorHiddenInput = document.getElementById('orderFilamentColor');
+
+  function updateSelectedColors() {
+    const selectedColors = [];
+    colorCheckboxes.forEach(cb => {
+      if (cb.checked) selectedColors.push(cb.value);
+    });
+
+    if (selectedColors.length === 0) {
+      colorDropdownBtn.textContent = 'Select Colors';
+    } else if (selectedColors.length <= 3) {
+      colorDropdownBtn.textContent = selectedColors.join(', ');
+    } else {
+      colorDropdownBtn.textContent = `${selectedColors.length} colors selected`;
+    }
+
+    colorHiddenInput.value = selectedColors.join(', ');
+  }
+
+  colorCheckboxes.forEach(cb => {
+    cb.addEventListener('change', updateSelectedColors);
+  });
 });
 
 window.editOrder = editOrder;
+
+// Download invoice PDF for an order
+function downloadInvoice(orderId) {
+  window.open(`/api/invoice/${orderId}/pdf`, '_blank');
+}
+
+window.downloadInvoice = downloadInvoice;

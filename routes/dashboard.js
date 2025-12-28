@@ -22,4 +22,14 @@ router.get('/upcoming-etas', async (req, res) => {
   }
 });
 
+router.get('/chart-data', async (req, res) => {
+  try {
+    const chartData = await dashboardModel.getChartData();
+    res.json(chartData);
+  } catch (error) {
+    console.error('Error fetching chart data:', error);
+    res.status(500).json({ error: 'Failed to fetch chart data' });
+  }
+});
+
 module.exports = router;

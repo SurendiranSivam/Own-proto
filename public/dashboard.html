@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -56,7 +57,11 @@
     <div class="container-fluid mt-4">
         <div class="page-header">
             <h2>📊 Dashboard</h2>
-            <span class="text-muted">Welcome back! Here's your business overview.</span>
+            <div class="welcome-marquee">
+                <span class="marquee-text">🎉 Welcome back! Here's your business overview. Stay productive and keep
+                    growing! 📈 Track orders, manage inventory, and monitor your print business performance in
+                    real-time. 🖨️</span>
+            </div>
         </div>
 
         <!-- Stats Cards -->
@@ -83,6 +88,34 @@
                 <div class="stat-card success">
                     <h5>💰 Total Revenue</h5>
                     <h3 id="totalRevenue">₹0.00</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card secondary">
+                    <h5>🏢 Total Vendors</h5>
+                    <h3 id="totalVendors">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card purple">
+                    <h5>🖨️ Filament Used</h5>
+                    <h3 id="usedFilamentKg">0 kg</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card danger">
+                    <h5>💸 Usage Cost</h5>
+                    <h3 id="usedFilamentCost">₹0.00</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card dark">
+                    <h5>⚠️ Low Stock Items</h5>
+                    <h3 id="lowStockItems">0</h3>
                 </div>
             </div>
         </div>
@@ -127,6 +160,51 @@
             </div>
         </div>
 
+        <!-- Compact KPI Charts Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card chart-card h-100">
+                    <div class="card-header">
+                        <h5>📊 Order Status</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <canvas id="orderStatusChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card chart-card h-100">
+                    <div class="card-header">
+                        <h5>💹 Revenue</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <canvas id="revenueChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card chart-card h-100">
+                    <div class="card-header">
+                        <h5>🎨 Stock</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <canvas id="stockChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card chart-card h-100">
+                    <div class="card-header">
+                        <h5>💳 Payments</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <canvas id="paymentChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Row - 2x2 Grid -->
         <div class="row">
             <!-- Stock by Type -->
             <div class="col-md-6 mb-4">
@@ -170,12 +248,13 @@
                                         <th>Order</th>
                                         <th>Customer</th>
                                         <th>Amount</th>
+                                        <th>Priority</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recentOrdersTable">
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted">Loading...</td>
+                                        <td colspan="5" class="text-center text-muted">Loading...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -183,10 +262,8 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Upcoming Deliveries Row -->
-        <div class="row">
+            <!-- Procurement ETAs -->
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
@@ -213,6 +290,7 @@
                 </div>
             </div>
 
+            <!-- Order Deliveries -->
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
