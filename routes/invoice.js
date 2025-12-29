@@ -179,8 +179,10 @@ router.get('/:orderId/pdf', async (req, res) => {
             doc.text(`Filament: ${order.filament_type} ${order.filament_color || ''}`, colDesc + 10, y + 32);
         }
         doc.fillColor('black').fontSize(10);
-        doc.text(order.estimated_quantity_units || '1', colQty, y + 18);
-        doc.text(`Rs.${subtotal.toFixed(2)}`, colRate, y + 18);
+        const qty = order.estimated_quantity_units || 1;
+        const unitPrice = subtotal / qty;
+        doc.text(qty.toString(), colQty, y + 18);
+        doc.text(`Rs.${unitPrice.toFixed(2)}`, colRate, y + 18);
         doc.text(`Rs.${subtotal.toFixed(2)}`, colAmount, y + 18);
         y += 50;
 

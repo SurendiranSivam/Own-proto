@@ -87,19 +87,20 @@ function renderDashboard() {
     }
   }
 
-  // Order ETA table
+  // Order Deliveries table - show ONLY delivered orders
   const orderETATable = document.getElementById('orderETATable');
   if (orderETATable) {
-    if (upcomingETAs.orders && upcomingETAs.orders.length > 0) {
-      orderETATable.innerHTML = upcomingETAs.orders.filter(o => o.eta_delivery).slice(0, 5).map(o => `
+    const deliveredOrders = (upcomingETAs.orders || []).filter(o => o.status === 'delivered');
+    if (deliveredOrders.length > 0) {
+      orderETATable.innerHTML = deliveredOrders.slice(0, 5).map(o => `
         <tr>
           <td>#${o.id}</td>
           <td>${o.customer_name || '-'}</td>
-          <td>${window.api.formatDate(o.eta_delivery)}</td>
+          <td>${window.api.formatDate(o.final_delivery_date || o.eta_delivery)}</td>
         </tr>
       `).join('');
     } else {
-      orderETATable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No pending</td></tr>';
+      orderETATable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No delivered orders</td></tr>';
     }
   }
 }

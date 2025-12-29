@@ -27,11 +27,32 @@ function populateDropdowns() {
     vendorSelect.innerHTML += `<option value="${v.id}">${v.name}</option>`;
   });
 
+  // Update filaments when vendor changes
+  vendorSelect.addEventListener('change', () => {
+    updateFilamentsByVendor(vendorSelect.value);
+  });
+
+  // Initially show all filaments
+  updateFilamentsByVendor('');
+}
+
+function updateFilamentsByVendor(vendorId) {
   const filamentSelect = document.getElementById('procurementFilament');
   filamentSelect.innerHTML = '<option value="">Select Filament</option>';
-  filaments.forEach(f => {
+
+  let filteredFilaments = filaments;
+  if (vendorId) {
+    // Filter to only show filaments from this vendor
+    filteredFilaments = filaments.filter(f => f.vendor_id == vendorId);
+  }
+
+  filteredFilaments.forEach(f => {
     filamentSelect.innerHTML += `<option value="${f.id}">${f.type} - ${f.brand} (${f.color})</option>`;
   });
+
+  if (vendorId && filteredFilaments.length === 0) {
+    filamentSelect.innerHTML = '<option value="">No filaments for this vendor</option>';
+  }
 }
 
 function initTable() {

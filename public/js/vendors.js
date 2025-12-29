@@ -70,6 +70,9 @@ function hideVendorForm() {
 async function saveVendor(e) {
   e.preventDefault();
 
+  // Clear previous validation errors
+  document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
   const vendorData = {
     name: document.getElementById('vendorName').value.trim(),
     email: document.getElementById('vendorEmail').value.trim(),
@@ -82,8 +85,38 @@ async function saveVendor(e) {
     notes: document.getElementById('vendorNotes').value.trim()
   };
 
+  const errors = [];
+
+  // Validate name
   if (!vendorData.name) {
-    window.api.showNotification('Vendor name is required', 'error');
+    errors.push('Vendor name is required');
+    document.getElementById('vendorName').classList.add('is-invalid');
+  }
+
+  // Validate contact (10 digits, numbers only)
+  if (vendorData.contact) {
+    if (!/^\d{10}$/.test(vendorData.contact)) {
+      errors.push('Contact must be exactly 10 digits (numbers only)');
+      document.getElementById('vendorContact').classList.add('is-invalid');
+    }
+  }
+
+  // Validate pincode (6 digits, numbers only)
+  if (vendorData.pincode) {
+    if (!/^\d{6}$/.test(vendorData.pincode)) {
+      errors.push('Pincode must be exactly 6 digits (numbers only)');
+      document.getElementById('vendorPincode').classList.add('is-invalid');
+    }
+  }
+
+  // Validate email format
+  if (vendorData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorData.email)) {
+    errors.push('Invalid email format');
+    document.getElementById('vendorEmail').classList.add('is-invalid');
+  }
+
+  if (errors.length > 0) {
+    window.api.showNotification(errors.join('. '), 'error');
     return;
   }
 

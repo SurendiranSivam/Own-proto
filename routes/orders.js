@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const orderModel = require('../models/order');
+const paymentModel = require('../models/payment');
 const { validateOrder, validationMiddleware } = require('../utils/validators');
 
 // Apply validation middleware
@@ -132,6 +133,26 @@ router.put('/:id', validateOrderInput, async (req, res) => {
     });
 
     res.json(order);
+
+    // Auto-create payment record if order is completed/delivered with full payment
+    if ((status === 'completed' || status === 'delivered') && req.body.payment_status === 'fully_paid') {
+      try {
+        // Check if payment already exists for this order
+        const existingPayments = await paymentModel.getByOrder(order.id);
+        if (!existingPayments || existingPayments.length === 0) {
+          // Create auto-payment record
+          await paymentModel.create({
+            order_id: order.id,
+            amount: order.total_amount || totalAmt,
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_method: 'cash',
+            notes: 'Auto-created on order completion'
+          });
+        }
+      } catch (paymentError) {
+        console.error('Auto-payment creation failed:', paymentError);
+      }
+    }
   } catch (error) {
     console.error('Error updating order:', error);
     if (error.message === 'Order not found') {

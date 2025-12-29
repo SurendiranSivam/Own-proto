@@ -190,11 +190,14 @@ async function saveOrder(e) {
     errors.push('Invalid email format');
   }
 
-  // Phone validation if provided
+  // Phone validation - mandatory, 10 digits only
   const phone = document.getElementById('orderContact').value.trim();
-  if (phone && !/^[\d\s\-\+\(\)]{10,}$/.test(phone)) {
+  if (!phone) {
     document.getElementById('orderContact').classList.add('is-invalid');
-    errors.push('Invalid phone number format');
+    errors.push('Contact number is required');
+  } else if (!/^\d{10}$/.test(phone)) {
+    document.getElementById('orderContact').classList.add('is-invalid');
+    errors.push('Contact must be exactly 10 digits (numbers only)');
   }
 
   if (errors.length > 0) {
