@@ -142,6 +142,9 @@ function calculateTotal() {
 async function saveProcurement(e) {
   e.preventDefault();
 
+  // Clear previous validation errors
+  document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
   const data = {
     vendor_id: document.getElementById('procurementVendor').value,
     filament_id: document.getElementById('procurementFilament').value,
@@ -149,14 +152,54 @@ async function saveProcurement(e) {
     cost_per_kg: document.getElementById('procurementCost').value,
     order_date: document.getElementById('procurementOrderDate').value,
     eta_delivery: document.getElementById('procurementETA').value || null,
-    invoice_number: document.getElementById('procurementInvoice').value.trim(),
-    tracking_number: document.getElementById('procurementTracking').value.trim(),
-    payment_status: document.getElementById('procurementPaymentStatus').value,
-    notes: document.getElementById('procurementNotes').value.trim()
+    invoice_number: document.getElementById('procurementInvoice').value || null,
+    tracking_number: document.getElementById('procurementTracking').value || null,
+    payment_status: document.getElementById('procurementPaymentStatus').value || null,
+    notes: document.getElementById('procurementNotes').value || null
   };
 
-  if (!data.vendor_id || !data.filament_id || !data.quantity_kg || !data.cost_per_kg) {
-    window.api.showNotification('Vendor, filament, quantity, and cost are required', 'error');
+  const errors = [];
+
+  // Validate required fields
+  if (!data.vendor_id) {
+    errors.push('Vendor is required');
+    document.getElementById('procurementVendor').classList.add('is-invalid');
+  }
+
+  if (!data.filament_id) {
+    errors.push('Filament is required');
+    document.getElementById('procurementFilament').classList.add('is-invalid');
+  }
+
+  if (!data.quantity_kg) {
+    errors.push('Quantity is required');
+    document.getElementById('procurementQuantity').classList.add('is-invalid');
+  }
+
+  if (!data.cost_per_kg) {
+    errors.push('Cost per kg is required');
+    document.getElementById('procurementCost').classList.add('is-invalid');
+  }
+
+  // Validate order date - cannot be in future
+  if (data.order_date) {
+    const orderDate = new Date(data.order_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (orderDate > today) {
+      errors.push('Order date cannot be in the future');
+      document.getElementById('procurementOrderDate').classList.add('is-invalid');
+    }
+  }
+
+  // Payment status mandatory
+  if (!data.payment_status) {
+    errors.push('Payment status is required');
+    document.getElementById('procurementPaymentStatus').classList.add('is-invalid');
+  }
+
+  if (errors.length > 0) {
+    window.api.showNotification(errors.join('. '), 'error');
     return;
   }
 
@@ -166,7 +209,7 @@ async function saveProcurement(e) {
     hideProcurementForm();
     loadData();
   } catch (error) {
-    window.api.showNotification('Failed to save: ' + error.message, 'error');
+    window.api.showNotification('Failed: ' + error.message, 'error');
   }
 }
 
